@@ -2,14 +2,14 @@ import streamlit as st
 from hugchat import hugchat
 from hugchat.login import Login
 
-#st.title('🎈 ChattyPants - AI Chatbot')
-st.set_page_config(page_title="🤗💬 ChattyPants")
+#st.title('🎈 OppoChats - AI Chatbot')
+st.set_page_config(page_title="🤗💬 OppoChats")
 
 
-st.write('🎈 ChattyPants - AI Chatbot')
+st.write('🎈 OppoChats - AI Chatbot')
 
 with st.sidebar:
-    st.title('🤗💬 ChattyPants')
+    st.title('🤗💬 OppoChats')
     if ('EMAIL' in st.secrets) and ('PASS' in st.secrets):
         st.success('HuggingFace Login credentials already provided!', icon='✅')
         hf_email = st.secrets['EMAIL']
