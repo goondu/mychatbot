@@ -2,12 +2,14 @@ import streamlit as st
 from hugchat import hugchat
 from hugchat.login import Login
 
-# App title
-st.set_page_config(page_title="🤗💬 HugChat")
+#st.title('🎈 ChattyPants - AI Chatbot')
+st.set_page_config(page_title="🤗💬 ChattyPants")
 
-# Hugging Face Credentials
+
+st.write('🎈 ChattyPants - AI Chatbot')
+
 with st.sidebar:
-    st.title('🤗💬 HugChat')
+    st.title('🤗💬 ChattyPants')
     if ('EMAIL' in st.secrets) and ('PASS' in st.secrets):
         st.success('HuggingFace Login credentials already provided!', icon='✅')
         hf_email = st.secrets['EMAIL']
@@ -20,7 +22,7 @@ with st.sidebar:
         else:
             st.success('Proceed to entering your prompt message!', icon='👉')
     st.markdown('📖 Learn how to build this app in this [blog](https://blog.streamlit.io/how-to-build-an-llm-powered-chatbot-with-streamlit/)!')
-    
+
 # Store LLM generated responses
 if "messages" not in st.session_state.keys():
     st.session_state.messages = [{"role": "assistant", "content": "How may I help you?"}]
@@ -35,10 +37,19 @@ def generate_response(prompt_input, email, passwd):
     # Hugging Face Login
     sign = Login(email, passwd)
     cookies = sign.login()
-    print(cookies)
+
+    # Save cookies to the local directory
+    cookie_path_dir = "./cookies_snapshot"
+    sign.saveCookiesToDir(cookie_path_dir)
+    print (cookies.get_dict())
     # Create ChatBot                        
     chatbot = hugchat.ChatBot(cookies=cookies.get_dict())
-    return chatbot.chat(prompt_input)
+    print(chatbot)
+    # New a conversation (ignore error)
+    #id = chatbot.new_conversation()
+    #chatbot.change_conversation(id)
+    #chatbot.switch_llm(1)
+    return chatbot.chat(prompt)
 
 # User-provided prompt
 if prompt := st.chat_input(disabled=not (hf_email and hf_pass)):
@@ -50,6 +61,8 @@ if prompt := st.chat_input(disabled=not (hf_email and hf_pass)):
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
+            #print(prompt)
+            #st.write(prompt)
             response = generate_response(prompt, hf_email, hf_pass) 
             st.write(response) 
     message = {"role": "assistant", "content": response}
